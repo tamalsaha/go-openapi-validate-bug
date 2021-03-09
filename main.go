@@ -4,9 +4,6 @@ import (
 	_ "embed"
 	"fmt"
 
-	"github.com/go-openapi/spec"
-	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/validate"
 	apiextensionsinternal "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apiservervalidation "k8s.io/apiextensions-apiserver/pkg/apiserver/validation"
@@ -49,31 +46,6 @@ func main() {
 		panic(err)
 	}
 
-	err2 := apiservervalidation.ValidateCustomResource(nil, u.UnstructuredContent(), schemaValidator)
-	fmt.Println(err2.ToAggregate())
-}
-
-func main33() {
-	openapiSchema := &spec.Schema{
-		SchemaProps: spec.SchemaProps{
-			ID: "",
-			Type: spec.StringOrArray{
-				"object",
-			},
-			Properties: map[string]spec.Schema{
-				"astr": {
-					SchemaProps: spec.SchemaProps{
-						Type: spec.StringOrArray{
-							"string",
-						},
-					},
-				},
-			},
-		},
-	}
-	validator := validate.NewSchemaValidator(openapiSchema, nil, "", strfmt.Default)
-	result := validator.Validate(map[string]interface{}{
-		"astr": "",
-	})
-	fmt.Println(result.AsError())
+	errlist := apiservervalidation.ValidateCustomResource(nil, u.UnstructuredContent(), schemaValidator)
+	fmt.Println(errlist.ToAggregate())
 }
